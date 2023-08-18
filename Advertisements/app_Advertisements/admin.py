@@ -6,13 +6,13 @@ from django.db.models.query import QuerySet
 
 
 class AdvertisementsAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "description", "price", "auction", "created_at", "created_date"]
+    list_display = ["id","user", "title", "description", "price", "auction", "created_at", "created_date", "image"]
     list_filter = ["auction", "created_at", "price"]
     actions = ["make_action_as_false", "make_action_as_true"]
     fieldsets = (
         ("Общие", {
             "fields": (
-                "title", "description"
+                "title", "description", "user", "image"
             ),
         }),
         ("Финансы", {
