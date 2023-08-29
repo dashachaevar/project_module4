@@ -6,7 +6,7 @@ from django.db.models.query import QuerySet
 
 
 class AdvertisementsAdmin(admin.ModelAdmin):
-    list_display = ["id","user", "title", "description", "price", "auction", "created_at", "created_date", "image"]
+    list_display = ["id","user", "title", "description", "price", "auction", "created_at", "updated_date", "image_display"]
     list_filter = ["auction", "created_at", "price"]
     actions = ["make_action_as_false", "make_action_as_true"]
     fieldsets = (
@@ -23,9 +23,6 @@ class AdvertisementsAdmin(admin.ModelAdmin):
         }),
     )
     
-
-
-
     @admin.action(description = "Убрать возможность торга")
     def make_action_as_false(self, request, queryset:QuerySet):
         queryset.update(auction = False)
@@ -33,15 +30,5 @@ class AdvertisementsAdmin(admin.ModelAdmin):
     @admin.action(description = "Добавить возможность торга")
     def make_action_as_true(self, request, queryset:QuerySet):
         queryset.update(auction = True)
-
-    @admin.display(description = "дата создания")
-    def created_date(self):
-        if self.created_at.date() == timezone.now().date():
-            created_time = self.created_at.time().strftime("%H:%M:%S")
-            return format_html(
-                "<span style = 'color:green; font-weight: bold'>Сегодня в {}</span>",
-                created_time
-            )
-        return self.created_at.strftime("%d.%m.%Y at %H:%M:%S")
 
 admin.site.register(Advertisements, AdvertisementsAdmin)

@@ -39,7 +39,15 @@ class Advertisements(models.Model):
                 updated_time
             )
         return self.created_at.strftime("%d.%m.%Y at %H:%M:%S")
-
+    
+    @admin.display(description = "изображене")
+    def image_display(self):
+        if self.image:
+            return format_html(
+                '<img src = "{}" style = "width: 55px;">', self.image.url
+            )
+        else:
+            return "No Image"
 
 
     class Meta: 
