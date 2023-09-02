@@ -4,16 +4,27 @@ from .models import Advertisements
 from .forms import AdvertisementForm
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from django.db.models import Count
 
 
+
+User = get_user_model()
 
 def index(request):
-    advertisements = Advertisements.objects.all()
-    context = {'advertisements' : advertisements}
+    title = request.GET.get('query')
+    if title:
+        advertisements = Advertisements.objects.filter(title__incontains = title)
+    else:
+        advertisements = Advertisements.objects.all()
+    context = {'advertisements' : advertisements,
+               'title' : title}
     return render(request, 'app_advertisement/index.html', context)
 
 def top_sellers(request):
-    return render(request, 'app_advertisement/top-sellers.html')
+    users = User.objects.annotate(adv_count = Count('advertisements')).order_by('-adv_count')
+    context = {'users' : users}
+    return render(request, 'app_advertisement/top-sellers.html', context)
 
 
 @login_required(login_url = reverse_lazy('profile'))
@@ -31,3 +42,8 @@ def advertisement_post(request):
         form = AdvertisementForm()
     context = {'form' : form}
     return render(request, 'app_advertisement/advertisement-post.html', context)
+
+def advertisement_detail(request, pk):
+    advertisement = Advertisements.objects.get(id = pk)
+    context = {'advertisement' : advertisement}
+    return render (request, 'app_advertisement/advertisement.html', context)
